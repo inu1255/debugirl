@@ -1,0 +1,6 @@
+core/*.js
+core/*/*.js
+build/*.js
+dist/
+*.html
+*.ejs
