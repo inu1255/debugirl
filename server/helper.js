@@ -24,37 +24,38 @@ function proxyChrome(ws, onclose) {
 		onclose && onclose(ws);
 	});
 	function call(path, args) {
-		if (path == "chrome.scripting.executeScript") {
-			let item = args[0];
-			if (item.func) {
-				let args = item.args || [];
-				item.code = `(${item.func.toString()})(${args.map((x) => JSON.stringify(x)).join(",")})`;
-				delete item.func;
-			}
-		}
-		args = args.map((x) => {
-			if (typeof x == "function") {
-				let id = cb2id.get(x);
-				if (id) {
-					if (path.endsWith("removeListener")) {
-						id2cb.delete(id);
-						cb2id.delete(x);
-					}
-					return id;
-				}
-				rid++;
-				id2cb.set(rid, x);
-				cb2id.set(x, rid);
-				return `callback_id:${rid}`;
-			}
-			return x;
-		});
-		rid++;
-		ws.send(JSON.stringify({path, args, rid}));
 		return new Promise((resolve, reject) => {
-			let item = {resolve, reject};
-			id2cb.set(rid, item);
-			cb2id.set(item, rid);
+			let pms = {resolve, reject};
+			if (path == "chrome.scripting.executeScript") {
+				let item = args[0];
+				if (item.func) {
+					let args = item.args || [];
+					item.code = `(${item.func.toString()})(${args.map((x) => JSON.stringify(x)).join(",")})`;
+					delete item.func;
+				}
+				pms.resolve = (x) => resolve([{result: x}]);
+			}
+			args = args.map((x) => {
+				if (typeof x == "function") {
+					let id = cb2id.get(x);
+					if (id) {
+						if (path.endsWith("removeListener")) {
+							id2cb.delete(id);
+							cb2id.delete(x);
+						}
+						return id;
+					}
+					rid++;
+					id2cb.set(rid, x);
+					cb2id.set(x, rid);
+					return `callback_id:${rid}`;
+				}
+				return x;
+			});
+			rid++;
+			ws.send(JSON.stringify({path, args, rid}));
+			id2cb.set(rid, pms);
+			cb2id.set(pms, rid);
 		});
 	}
 	function proxy(path) {

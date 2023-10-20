@@ -17,6 +17,7 @@ function connectWS(url) {
 	};
 	ws.onmessage = (e) => {
 		if (e.data == "ping") return ws.send("pong");
+		if (e.data == "pong") return;
 		console.log(e.data);
 		let data = JSON.parse(e.data);
 		call(data);
@@ -26,7 +27,7 @@ function connectWS(url) {
 	};
 	ws.onclose = (e) => {
 		setTimeout(() => {
-			if (config.auto_connect) connectWS(url);
+			if (config.auto_connect) connectWS(config.ws);
 		}, 1e3);
 		if (!config.auto_connect) {
 			// 通知popup
@@ -35,6 +36,10 @@ function connectWS(url) {
 	};
 	return ws;
 }
+
+setInterval(() => {
+	if (ws && ws.readyState == 1) ws.send("ping");
+}, 5e3);
 
 function once(type, fn) {
 	function cb() {
@@ -47,8 +52,8 @@ function once(type, fn) {
 function send(data) {
 	if (!ws) return;
 	console.log("send", data);
+	if (data && data.err && Object.keys(data.err).length < 1) data.err = formatError(data.err);
 	if (typeof data != "string") data = JSON.stringify(data);
-	else if (data && data.err && Object.keys(data.err).length < 1) data.err = formatError(data.err);
 	if (ws.readyState != WebSocket.OPEN) {
 		once("open", () => ws.send(data));
 	} else {
@@ -79,7 +84,8 @@ function call0({path, args, rid}) {
 		}
 		return x;
 	});
-	return obj[method](...args);
+	if (typeof obj[method] === "function") return obj[method](...args);
+	throw `method ${path} not found`;
 }
 
 function call({path, args, rid}) {
@@ -136,7 +142,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 		chrome.storage.local.set(config);
 		ws.close();
 	} else if (message.type == "status") {
-		sendResponse({status: ws && ws.readyState < 2 ? "connected" : "disconnected"});
+		sendResponse({status: ws && ws.readyState == 2 ? "connected" : "disconnected"});
 	}
 });
 

@@ -1,10 +1,10 @@
 <template>
 	<div class="main_app">
 		<div class="line">
-			<b>server:&nbsp;</b><input type="text" :value="body.ws" placeholder="websocket server" />
+			<b>server:&nbsp;</b><input v-model="body.ws" type="text" placeholder="websocket server" />
 		</div>
 		<div class="line">
-			<div class="tips" :class="status">{{ status }}</div>
+			<div class="tips" :class="status1">{{ status1 }}</div>
 			<button @click="disconnect">disconnect</button>
 			<button @click="connect">connect</button>
 		</div>
@@ -17,11 +17,18 @@ export default {
 	data() {
 		return {
 			status: "loading",
+			body: {
+				ws: this.$root.ws,
+			},
 		};
 	},
 	computed: {
-		body() {
-			return this.$root;
+		status1() {
+			return this.status == "disconnected"
+				? this.$root.auto_connect
+					? "connecting"
+					: "disconnected"
+				: this.status;
 		},
 	},
 	mounted() {

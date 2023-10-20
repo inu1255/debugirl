@@ -28,11 +28,13 @@ async function start() {
 		});
 	}
 	if (tab.status != "complete") await waitComplete(tab);
-	let name = await chrome.scripting.executeScript({
-		target: {tabId: tab.id},
-		func: function () {
-			return document.querySelector(".bigger").innerText;
-		},
-	});
+	let name = await chrome.scripting
+		.executeScript({
+			target: {tabId: tab.id},
+			func: function () {
+				return document.querySelector(".bigger").innerText;
+			},
+		})
+		.then((x) => x[0].result);
 	console.log("your v2ex username is:", name);
 }
