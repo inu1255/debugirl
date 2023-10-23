@@ -142,7 +142,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 		chrome.storage.local.set(config);
 		ws.close();
 	} else if (message.type == "status") {
-		sendResponse({status: ws && ws.readyState == 2 ? "connected" : "disconnected"});
+		sendResponse({status: ws && ws.readyState == 1 ? "connected" : "disconnected"});
 	}
 });
 
