@@ -1,4 +1,5 @@
 import config from "@/common/config";
+import "@/common/extends";
 import {formatError} from "@/common/utils";
 
 const callback_map = new Map();

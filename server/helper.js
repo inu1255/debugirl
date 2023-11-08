@@ -4,6 +4,7 @@ function proxyChrome(ws, onclose) {
 	let cb2id = new Map();
 	ws.on("message", function incoming(message) {
 		if (message == "pong") return;
+		if (message == "ping") return ws.send("pong");
 		let data = JSON.parse(message);
 		let item = id2cb.get(data.rid);
 		if (!item) return;
@@ -72,7 +73,7 @@ function proxyChrome(ws, onclose) {
 }
 exports.proxyChrome = proxyChrome;
 
-function waitComplete(tab) {
+function waitComplete(chrome, tab) {
 	return new Promise((resolve) =>
 		chrome.tabs.onUpdated.addListener(function listener(tabId, changeInfo) {
 			if (tabId == tab.id && changeInfo.status == "complete") {

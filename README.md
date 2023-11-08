@@ -22,3 +22,8 @@ node server
 
 如果运行成功你可以得到以下输出
 ![demo](./static/demo.png)
+
+## 拓展接口
+
+对于一些复杂的操作, 可以在 `src/common/extends.js` 文件中定义拓展接口。
+然后在 `@types/debugirl.d.ts` 中定义接口类型

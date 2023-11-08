@@ -27,7 +27,7 @@ async function start() {
 			active: false,
 		});
 	}
-	if (tab.status != "complete") await waitComplete(tab);
+	if (tab.status != "complete") await waitComplete(chrome, tab);
 	let name = await chrome.scripting
 		.executeScript({
 			target: {tabId: tab.id},
