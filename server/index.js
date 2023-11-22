@@ -27,6 +27,7 @@ async function start() {
 			active: false,
 		});
 	}
+	if (tab.status == "unloaded") await chrome.tabs.reload(tab.id);
 	if (tab.status != "complete") await waitComplete(chrome, tab);
 	let name = await chrome.scripting
 		.executeScript({

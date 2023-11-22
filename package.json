@@ -1,6 +1,6 @@
 {
   "name": "debugirl_v3",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "private": true,
   "scripts": {
     "start": "vue-cli-service  --env.NODE_ENV=development build-watch --mode development",

@@ -109,7 +109,9 @@ function call({path, args, rid}) {
 				delete item.code;
 			}
 		}
-		return chrome.scripting.executeScript(item);
+		return chrome.scripting.executeScript(item).catch((err) => {
+			send({rid, err});
+		});
 	}
 	try {
 		console.log(args);
