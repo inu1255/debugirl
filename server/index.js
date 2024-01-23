@@ -20,6 +20,7 @@ async function start() {
 		url: "https://www.v2ex.com/",
 	});
 	let tab = tabs[0];
+	console.log(tab);
 	if (!tab) {
 		tab = await chrome.tabs.create({
 			url: "https://www.v2ex.com/",

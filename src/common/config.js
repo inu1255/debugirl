@@ -1,12 +1,26 @@
 const config = {
-	/** 是否自动连接 */
-	auto_connect: true,
-	/** websocket地址 */
-	ws: "ws://localhost:3333",
+	list: [{id: 1, url: "ws://localhost:3333", enabled: true}],
 };
 
-chrome.storage.local.get(config, function (data) {
-	Object.assign(config, data);
+/** @type {Promise<typeof config>} */
+export const ready = new Promise((resolve, reject) => {
+	chrome.storage.local.get(function (data) {
+		if (data && data.ws) {
+			config.list = [
+				{
+					id: 1,
+					url: data.ws,
+					enabled: !!data.auto_connect,
+				},
+			];
+			delete data.ws;
+			delete data.auto_connect;
+			chrome.storage.local.set({ws: null, auto_connect: null, list: config.list});
+		} else {
+			Object.assign(config, data);
+		}
+		resolve(config);
+	});
 });
 
 export default config;

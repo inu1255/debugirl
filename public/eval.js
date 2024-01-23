@@ -4,21 +4,22 @@
 	var code = s.textContent;
 	var rid = +cur.id;
 	var id = cur.getAttribute("eid");
+	var wid = cur.getAttribute("wid");
 	try {
 		var pms = eval(code);
 		if (pms && typeof pms.then === "function") {
 			pms
 				.then(function (data) {
-					send({rid: rid, data: data});
+					send({rid: rid, wid: wid, data: data});
 				})
 				.catch(function (err) {
-					send({rid: rid, err: err});
+					send({rid: rid, wid: wid, err: err});
 				});
 		} else {
-			send({rid: rid, data: pms});
+			send({rid: rid, wid: wid, data: pms});
 		}
 	} catch (err) {
-		send({rid: rid, err: err});
+		send({rid: rid, wid: wid, err: err});
 	}
 	s.remove();
 	cur.remove();
