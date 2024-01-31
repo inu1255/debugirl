@@ -16,6 +16,7 @@ const manifest = {
 		"cookies",
 		"background",
 		"activeTab",
+		"webNavigation",
 		// "contextMenus",
 		// 'unlimitedStorage',
 		"storage",
